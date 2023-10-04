@@ -1,0 +1,12 @@
+query PokemonListQuery($offset:Int, $limit:Int){
+    pokemons(offset:$offset, limit:$limit) {
+        results{
+            id
+            name
+            image
+        }
+        prevOffset
+        nextOffset
+        __typename
+    }
+}

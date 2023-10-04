@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Seemingly a PokéDex</string>
+    <string name="pokemon_list_title">Pokémon</string>
+
+    <!-- Pokemon Details -->
+    <string name="height_feet">Height: %1$s feet</string>
+    <string name="weight_lbs">Weight: %1$s lbs.</string>
+
+    <!-- Pokemon Types -->
+    <string name="fire_type">Fire</string>
+    <string name="water_type">Water</string>
+    <string name="grass_type">Grass</string>
+    <string name="electric_type">Electric</string>
+    <string name="dragon_type">Dragon</string>
+    <string name="ice_type">Ice</string>
+    <string name="fairy_type">Fairy</string>
+    <string name="psychic_type">Psychic</string>
+    <string name="ghost_type">Ghost</string>
+    <string name="dark_type">Dark</string>
+    <string name="steel_type">Steel</string>
+    <string name="flying_type">Flying</string>
+    <string name="normal_type">Normal</string>
+    <string name="ground_type">Ground</string>
+    <string name="rock_type">Rock</string>
+    <string name="fighting_type">Fighting</string>
+    <string name="bug_type">Bug</string>
+    <string name="poison_type">Poison</string>
+    <string name="unknown_type">\????</string>
+    <string name="base_stats_card_title">Base Stats</string>
+    <string name="move_set_title">Move Set</string>
+    <string name="learnable_at_level">learnable at level: %1$s</string>
+    <string name="something_went_wrong">There seems to be something missing perhaps the archives are incomplete.</string>
+    <string name="retry_text">Retry</string>
+    <string name="sprite_front_label">Front</string>
+    <string name="sprite_back_label">Back</string>
+</resources>

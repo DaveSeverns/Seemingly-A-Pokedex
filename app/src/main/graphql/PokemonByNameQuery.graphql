@@ -1,0 +1,36 @@
+query PokemonByNameQuery($name:String!)  {
+    pokemon(name:$name) {
+        weight
+        height
+        name
+        types{
+            slot
+            type {
+                name
+                url
+            }
+        }
+        sprites{
+            front_default
+            back_default
+        }
+        moves {
+            version_group_details{
+                version_group {
+                    name
+                }
+                level_learned_at
+            }
+            move {
+                name
+                url
+            }
+        }
+        stats{
+            stat {
+                name
+            }
+            base_stat
+        }
+    }
+}
