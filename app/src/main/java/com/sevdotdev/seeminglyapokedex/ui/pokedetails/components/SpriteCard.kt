@@ -36,7 +36,7 @@ internal fun SpriteCard(
     spriteBackUrl: String?,
     modifier: Modifier = Modifier
 ) {
-    DetailsContentCard(cardTitle = "Sprite(s)", modifier = modifier) {
+    DetailsContentCard(cardTitle = stringResource(R.string.sprite_title), modifier = modifier) {
         Row(Modifier.fillMaxWidth()) {
             Spacer(modifier = Modifier.weight(1f))
             Row(
