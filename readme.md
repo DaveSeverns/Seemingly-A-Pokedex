@@ -33,5 +33,9 @@ This project does require Java 17 to be set as the "Gradle JDK" in the project c
 
 `Android Studio > Settings > Build, Execution, Deployment > Build Tools > Gradle > Gradle JDK `
 
+### Demo
+![list](https://github.com/DaveSeverns/Seemingly-A-Pokedex/assets/15655675/280045c7-8ca0-47f6-9fb4-e3375164bf64)
+![detail](https://github.com/DaveSeverns/Seemingly-A-Pokedex/assets/15655675/f103fc28-51b6-4873-94a3-741cdba71e45)
+
 
 
