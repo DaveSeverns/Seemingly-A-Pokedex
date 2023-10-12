@@ -6,12 +6,12 @@ package com.sevdotdev.seeminglyapokedex.domain.model
  *
  * [Success] self explanatory, wraps the  requested data of type [T]
  * [Failure] request has failed, the reason being a [PokeError]
- * [Loaidng] an object, representing work still in progress.
+ * [Loading] an object, representing work still in progress.
  */
 sealed class PokeDataResult<out T> {
     data class Success<out T>(val data: T) : PokeDataResult<T>()
     data class Failure(val error: PokeError) : PokeDataResult<Nothing>()
-    object Loaidng : PokeDataResult<Nothing>()
+    object Loading : PokeDataResult<Nothing>()
 }
 
 /**
@@ -31,7 +31,7 @@ inline fun <R, reified T> PokeDataResult<T>.fold(
             isFailure(this.error)
         }
 
-        PokeDataResult.Loaidng -> {
+        PokeDataResult.Loading -> {
             isLoading()
         }
 

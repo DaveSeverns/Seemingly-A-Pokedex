@@ -38,7 +38,7 @@ class PokeDetailsViewModelTest{
         )
 
         testSubject.state.test {
-            assertEquals(PokeDataResult.Loaidng, awaitItem())
+            assertEquals(PokeDataResult.Loading, awaitItem())
         }
     }
 

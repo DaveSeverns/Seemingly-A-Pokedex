@@ -13,14 +13,14 @@ import com.sevdotdev.seeminglyapokedex.domain.model.Sprite
 /**
  * Map [PokemonByNameQuery.Data] to domain object, nullable return type allowed.
  */
-internal fun PokemonByNameQuery.Data?.toDomain(): SinglePokemon? =
+fun PokemonByNameQuery.Data?.toDomain(): SinglePokemon? =
     this?.pokemon?.toDomain()
 
 /**
  * Map [PokemonByNameQuery.Pokemon] to domain object, provide defaults,
  * if pokemon's name is not present data is invalid and return `null`
  */
-internal fun Pokemon.toDomain(): SinglePokemon? =
+fun Pokemon.toDomain(): SinglePokemon? =
     SinglePokemon(
         name = this.name.orEmpty(),
         heightImperial = this.height ?: 0,
@@ -32,13 +32,13 @@ internal fun Pokemon.toDomain(): SinglePokemon? =
     ).takeIf { it.name.isNotEmpty() }
 
 
-internal fun List<Type?>?.toDomain(): List<PokemonType> =
+fun List<Type?>?.toDomain(): List<PokemonType> =
     this?.map { queryType ->
         getPokemonTypeFromString(queryType?.type?.name)
     } ?: listOf(PokemonType.UNKNOWN)
 
 
-internal fun List<Stat?>?.toDomain(): Map<String, Int> {
+fun List<Stat?>?.toDomain(): Map<String, Int> {
     return this?.mapNotNull {
         it?.stat?.name?.let { name ->
             Pair(name, it.base_stat ?: 0)
@@ -46,12 +46,12 @@ internal fun List<Stat?>?.toDomain(): Map<String, Int> {
     }?.toMap() ?: emptyMap()
 }
 
-internal fun Sprites?.toDomain() = Sprite(
+fun Sprites?.toDomain() = Sprite(
     this?.front_default,
     this?.back_default
 )
 
-internal fun List<PokemonByNameQuery.Move?>?.toDomain(): Set<Move> {
+fun List<PokemonByNameQuery.Move?>?.toDomain(): Set<Move> {
     val initialSet = mutableSetOf<Move>()
     this?.map { queryMove ->
         queryMove?.move?.name?.let { name ->

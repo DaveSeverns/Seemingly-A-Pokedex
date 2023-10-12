@@ -28,7 +28,7 @@ class PokeDetailsViewModel @Inject constructor(
     private val pokemonName: String = savedStateHandle[NavRoute.PokemonDetails.ARG_NAME] ?: error(
         "Now is not the time to ask: \"Who's that Pokémon?\""
     )
-    private val _state: MutableStateFlow<PokeDataResult<SinglePokemon>> = MutableStateFlow(PokeDataResult.Loaidng)
+    private val _state: MutableStateFlow<PokeDataResult<SinglePokemon>> = MutableStateFlow(PokeDataResult.Loading)
     val state: StateFlow<PokeDataResult<SinglePokemon>> = _state.asStateFlow()
 
     init {

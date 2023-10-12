@@ -28,7 +28,7 @@ class PokeListViewModel @Inject constructor(
 ): ViewModel() {
 
     private var refreshJob: Job? = null
-    private val _state: MutableStateFlow<PokeDataResult<List<PokemonListItem>>> = MutableStateFlow(PokeDataResult.Loaidng)
+    private val _state: MutableStateFlow<PokeDataResult<List<PokemonListItem>>> = MutableStateFlow(PokeDataResult.Loading)
     val state: StateFlow<PokeDataResult<List<PokemonListItem>>> = _state.asStateFlow()
 
     init {
@@ -52,7 +52,7 @@ class PokeListViewModel @Inject constructor(
     }
 
     private fun handleRefreshClicked() {
-        _state.tryEmit(PokeDataResult.Loaidng)
+        _state.tryEmit(PokeDataResult.Loading)
         refreshPokemon()
     }
 

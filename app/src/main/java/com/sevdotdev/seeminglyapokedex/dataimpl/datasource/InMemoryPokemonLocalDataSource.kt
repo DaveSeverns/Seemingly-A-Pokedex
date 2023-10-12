@@ -34,21 +34,27 @@ class InMemoryPokemonLocalDataSource @Inject constructor() : PokemonLocalDataSou
         emptyList()
     )
 
-    override fun getPokemonListFlow(): Flow<List<PokemonListItem>> = pokemonListItemFlow.combine(singlePokemonCache){ pokeList: List<PokemonListItem>, listOfSingleMons: List<SinglePokemon> ->
-        pokeList.map { item ->
-            val cachedPokemon: SinglePokemon? = listOfSingleMons.find { singlePokemon -> singlePokemon.name == item.name }
-            /**
-             * The API does not provide this value initially but it is a pretty crucial piece of information when
-             * viewing pokemon at a glance, taking advantage of the combine operator to observe any updates
-             * to the [SinglePokemon] details flow if the type becomes avaiable.øø
-             */
-            if (item.type == PokemonType.UNKNOWN && cachedPokemon != null){
-                item.copy(type = cachedPokemon.types[0])
-            } else{
-                item
+    override fun getPokemonListFlow(): Flow<List<PokemonListItem>> =
+        pokemonListItemFlow.combine(
+            singlePokemonCache,
+        ) { pokeList: List<PokemonListItem>, listOfSingleMons: List<SinglePokemon> ->
+            pokeList.map { item ->
+                val cachedPokemon: SinglePokemon? =
+                    listOfSingleMons.find { singlePokemon -> singlePokemon.name == item.name }
+                /**
+                 * The API does not provide this value initially but it is a pretty crucial piece
+                 * of information when viewing pokemon at a glance,
+                 * taking advantage of the combine operator to
+                 * observe any updatesto the [SinglePokemon] details flow if the type becomes
+                 * avaiable.
+                 */
+                if (item.type == PokemonType.UNKNOWN && cachedPokemon != null) {
+                    item.copy(type = cachedPokemon.types[0])
+                } else {
+                    item
+                }
             }
         }
-    }
 
     override fun getSinglePokemonByNameFlow(name: String): Flow<SinglePokemon?> =
         singlePokemonCache.map { current ->
