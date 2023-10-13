@@ -7,6 +7,7 @@ import com.sevdotdev.seeminglyapokedex.domain.model.PokeDataResult
 import com.sevdotdev.seeminglyapokedex.domain.model.SinglePokemon
 import com.sevdotdev.seeminglyapokedex.domain.usecase.GetPokemonDetailsUseCase
 import com.sevdotdev.seeminglyapokedex.ui.navigation.NavRoute
+import com.sevdotdev.seeminglyapokedex.ui.pokedetails.PokeDetailsAction.RetryFetchPokemon
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,19 +23,44 @@ import javax.inject.Inject
 @HiltViewModel
 class PokeDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    getPokemonDetailsUseCase: GetPokemonDetailsUseCase
-): ViewModel() {
+    private val getPokemonDetailsUseCase: GetPokemonDetailsUseCase
+) : ViewModel() {
 
     private val pokemonName: String = savedStateHandle[NavRoute.PokemonDetails.ARG_NAME] ?: error(
         "Now is not the time to ask: \"Who's that Pokémon?\""
     )
-    private val _state: MutableStateFlow<PokeDataResult<SinglePokemon>> = MutableStateFlow(PokeDataResult.Loading)
+    private val _state: MutableStateFlow<PokeDataResult<SinglePokemon>> =
+        MutableStateFlow(PokeDataResult.Loading)
     val state: StateFlow<PokeDataResult<SinglePokemon>> = _state.asStateFlow()
 
     init {
-        getPokemonDetailsUseCase(pokemonName).onEach {
-            _state.emit(it)
-        }.launchIn(viewModelScope)
+        fetchSinglePokemon()
     }
 
+    /**
+     * Public api to allow for submission of [PokeDetailsAction] to the
+     * ViewModel.
+     */
+    fun submitAction(action: PokeDetailsAction) {
+        when (action) {
+            RetryFetchPokemon -> {
+                _state.tryEmit(PokeDataResult.Loading)
+                fetchSinglePokemon()
+            }
+        }
+    }
+
+    private fun fetchSinglePokemon() = getPokemonDetailsUseCase(pokemonName).onEach {
+        _state.emit(it)
+    }.launchIn(viewModelScope)
+
+}
+
+/**
+ * Sealed class representing various user interactions from the
+ * [com.sevdotdev.seeminglyapokedex.ui.pokedetails.PokeDetailsScreen] that the [PokeDetailsViewModel]
+ * wants to respond to.
+ */
+sealed interface PokeDetailsAction {
+    object RetryFetchPokemon : PokeDetailsAction
 }
