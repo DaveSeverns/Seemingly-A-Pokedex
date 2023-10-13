@@ -28,6 +28,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.sevdotdev.seeminglyapokedex.R
 import com.sevdotdev.seeminglyapokedex.domain.model.PokemonListItem
+import com.sevdotdev.seeminglyapokedex.domain.model.PokemonType
 import com.sevdotdev.seeminglyapokedex.ui.common.TypePill
 import com.sevdotdev.seeminglyapokedex.ui.theme.SeeminglyAPokeDexTheme
 import com.sevdotdev.seeminglyapokedex.ui.util.res.toStringResource
@@ -103,10 +104,12 @@ private fun CardContent(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(text = pokemon.id, style = MaterialTheme.typography.titleLarge)
             Row {
-                TypePill(
-                    typeName = stringResource(id = pokemon.type.toStringResource()),
-                    typeColor = pokemon.type.toColor()
-                )
+                if (pokemon.type != PokemonType.UNKNOWN) {
+                    TypePill(
+                        typeName = stringResource(id = pokemon.type.toStringResource()),
+                        typeColor = pokemon.type.toColor()
+                    )
+                }
             }
         }
         Text(
