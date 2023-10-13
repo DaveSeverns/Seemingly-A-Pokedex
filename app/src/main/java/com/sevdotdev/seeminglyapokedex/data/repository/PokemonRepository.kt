@@ -14,7 +14,7 @@ interface PokemonRepository {
     /**
      * When called the result should be a refresh or sync of any network reliant pokemon data
      */
-    suspend fun refreshPokemonData()
+    suspend fun refreshPokemonData(): Result<Unit>
 
     /**
      * Returns a flow of a [Result] which wraps a list of [PokemonListItem]

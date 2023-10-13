@@ -14,9 +14,9 @@ class InMemoryPokemonLocalDataSourceTest {
     private val testSubject = InMemoryPokemonLocalDataSource()
 
     @Test
-    fun `pokemon list flow will not emit initial state`() = runTest{
+    fun `pokemon list flow will emit initial state empty list`() = runTest {
         testSubject.getPokemonListFlow().test {
-            expectNoEvents()
+            assertEquals(emptyList<PokemonListItem>(), awaitItem())
         }
     }
 
@@ -47,11 +47,14 @@ class InMemoryPokemonLocalDataSourceTest {
 
     @Test
     fun `pokemon list flow updates if details for a item in list details are cached`() = runTest {
-        val pokemonListItem = DomainTestFixtures.createPokemonListItem(DomainTestFixtures.Defaults.DEFAULT_NAME)
-        val singlePokemon = DomainTestFixtures.createSinglePokemon(DomainTestFixtures.Defaults.DEFAULT_NAME)
+        val pokemonListItem =
+            DomainTestFixtures.createPokemonListItem(DomainTestFixtures.Defaults.DEFAULT_NAME)
+        val singlePokemon =
+            DomainTestFixtures.createSinglePokemon(DomainTestFixtures.Defaults.DEFAULT_NAME)
         testSubject.getPokemonListFlow().test {
+            awaitItem() // empty value
             testSubject.savePokemonList(listOf(pokemonListItem))
-            assertEquals(PokemonType.UNKNOWN, awaitItem()[0].type )
+            assertEquals(PokemonType.UNKNOWN, awaitItem()[0].type)
             testSubject.saveSinglePokemon(singlePokemon)
             assertEquals(PokemonType.FIRE, awaitItem()[0].type)
         }

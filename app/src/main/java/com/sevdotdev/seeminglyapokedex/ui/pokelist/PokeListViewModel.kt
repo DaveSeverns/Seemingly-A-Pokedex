@@ -8,7 +8,6 @@ import com.sevdotdev.seeminglyapokedex.domain.usecase.GetListOfPokemonUseCase
 import com.sevdotdev.seeminglyapokedex.domain.usecase.RefreshPokemonListUseCase
 import com.sevdotdev.seeminglyapokedex.ui.pokelist.PokeListAction.RefreshClicked
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,18 +24,16 @@ import javax.inject.Inject
 class PokeListViewModel @Inject constructor(
     getListOfPokemonUseCase: GetListOfPokemonUseCase,
     private val refreshPokemonListUseCase: RefreshPokemonListUseCase,
-): ViewModel() {
+) : ViewModel() {
 
-    private var refreshJob: Job? = null
-    private val _state: MutableStateFlow<PokeDataResult<List<PokemonListItem>>> = MutableStateFlow(PokeDataResult.Loading)
+    private val _state: MutableStateFlow<PokeDataResult<List<PokemonListItem>>> =
+        MutableStateFlow(PokeDataResult.Loading)
     val state: StateFlow<PokeDataResult<List<PokemonListItem>>> = _state.asStateFlow()
 
     init {
         getListOfPokemonUseCase().onEach {
             _state.emit(it)
         }.launchIn(viewModelScope)
-
-        refreshPokemon()
     }
 
     /**
@@ -57,10 +54,7 @@ class PokeListViewModel @Inject constructor(
     }
 
     private fun refreshPokemon() {
-        if (refreshJob?.isActive == true){
-            return
-        }
-        refreshJob = viewModelScope.launch {
+        viewModelScope.launch {
             refreshPokemonListUseCase()
         }
     }
@@ -73,5 +67,5 @@ class PokeListViewModel @Inject constructor(
  * wants to respond to.
  */
 sealed interface PokeListAction {
-    object RefreshClicked: PokeListAction
+    object RefreshClicked : PokeListAction
 }

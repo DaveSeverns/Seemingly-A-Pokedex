@@ -97,6 +97,6 @@ class PokeListViewModelTest {
             assertEquals(PokeDataResult.Loading, awaitItem())
         }
         advanceUntilIdle()
-        coVerify(exactly = 2) { refreshPokemonListUseCase() }
+        coVerify(exactly = 1) { refreshPokemonListUseCase() }
     }
 }

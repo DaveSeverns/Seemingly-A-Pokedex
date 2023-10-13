@@ -10,12 +10,12 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.runs
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -29,18 +29,34 @@ class DefaultPokemonRepositoryTest {
     @MockK
     lateinit var remoteDataSource: PokemonRemoteDataSource
 
-    @InjectMockKs
-    lateinit var testSubject: DefaultPokemonRepository
+
+    private lateinit var testSubject: DefaultPokemonRepository
+
+    private val testScope = TestScope()
 
     @BeforeEach
-    fun setup() = MockKAnnotations.init(this)
+    fun setup() {
+        MockKAnnotations.init(this)
+        testSubject = DefaultPokemonRepository(
+            localDataSource = localDataSource,
+            remoteDataSource = remoteDataSource,
+            coroutineScope = testScope,
+        )
+    }
 
     @Test
-    fun `verify refresh pokemon data always calls localdatasource`() = runTest {
+    fun `verify refresh pokemon data calls localdatasource on success`() = testScope.runTest {
         coEvery { localDataSource.savePokemonList(any()) } just runs
-        coEvery { remoteDataSource.getAllPokemon() } returns Result.failure(Exception("Oops"))
+        coEvery { remoteDataSource.getAllPokemon() } returns Result.success(emptyList())
         testSubject.refreshPokemonData()
         coVerify { localDataSource.savePokemonList(emptyList()) }
+    }
+
+    @Test
+    fun `verify nothing is saved to localdatasource on network failure`() = testScope.runTest {
+        coEvery { remoteDataSource.getAllPokemon() } returns Result.failure(Exception())
+        testSubject.refreshPokemonData()
+        coVerify(exactly = 0) { localDataSource.savePokemonList(any()) }
     }
 
     @Test
@@ -53,9 +69,10 @@ class DefaultPokemonRepositoryTest {
     }
 
     @Test
-    fun `assert if a data is missing list flow returns failure result`() = runTest {
+    fun `assert if a data is missing list flow returns failure result`() = testScope.runTest {
         val flow = MutableStateFlow(emptyList<PokemonListItem>())
         every { localDataSource.getPokemonListFlow() } returns flow
+        coEvery { remoteDataSource.getAllPokemon() } returns Result.failure(Exception())
         testSubject.getAllPokemonFlow().test {
             assert(awaitItem().isFailure)
         }

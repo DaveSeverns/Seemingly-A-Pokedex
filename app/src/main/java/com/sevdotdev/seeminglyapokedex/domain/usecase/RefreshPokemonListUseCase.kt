@@ -10,7 +10,7 @@ import javax.inject.Inject
 class RefreshPokemonListUseCase @Inject constructor(
     private val pokemonRepository: PokemonRepository
 ) {
-    suspend operator fun invoke() {
+   suspend operator fun invoke() {
         pokemonRepository.refreshPokemonData()
     }
 }
