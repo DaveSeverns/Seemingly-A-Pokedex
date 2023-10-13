@@ -56,7 +56,7 @@ class DefaultPokemonRepository @Inject constructor(
             if (pokemons.isNotEmpty()) {
                 Result.success(pokemons)
             } else refreshPokemonData().map {
-                emptyList()
+                pokemons
             }
         }
 
