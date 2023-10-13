@@ -28,6 +28,7 @@ import com.sevdotdev.seeminglyapokedex.domain.model.fold
 import com.sevdotdev.seeminglyapokedex.ui.common.DefaultErrorContent
 import com.sevdotdev.seeminglyapokedex.ui.common.DefaultLoadingContent
 import com.sevdotdev.seeminglyapokedex.ui.common.TypePill
+import com.sevdotdev.seeminglyapokedex.ui.pokedetails.PokeDetailsAction.RetryFetchPokemon
 import com.sevdotdev.seeminglyapokedex.ui.pokedetails.components.BaseStatsCard
 import com.sevdotdev.seeminglyapokedex.ui.pokedetails.components.SpriteCard
 import com.sevdotdev.seeminglyapokedex.ui.util.res.toStringResource
@@ -46,11 +47,15 @@ fun PokeDetailsScreen(
     state.fold(
         isFailure = { error ->
             DefaultErrorContent(
-                error = error, modifier = Modifier
+                error = error,
+                modifier = Modifier
                     .fillMaxSize()
                     .padding(
                         horizontal = 16.dp
-                    )
+                    ),
+                onRetryAction = {
+                    viewModel.submitAction(RetryFetchPokemon)
+                }
             )
         },
         isLoading = {

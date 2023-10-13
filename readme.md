@@ -1,5 +1,5 @@
 # Seemingly a PokeDex
-This application appears to be a PokéDex. But is a much more real sense it is a very specific way to 
+This application appears to be a PokéDex. But in a much more real sense it is a very specific way to 
 view all original 151 Pokémon (cause that is all there is) in ultra fun List/Detail format. Use 
 `Seemingly a PokéDex` to view a list of all the Pokémon and learn their names, ID numbers, and 
 see a picture of them. Want to learn more? Just click on the Pokémon's card you want to learn more about 

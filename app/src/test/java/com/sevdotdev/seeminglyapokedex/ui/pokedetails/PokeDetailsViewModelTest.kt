@@ -8,14 +8,17 @@ import com.sevdotdev.seeminglyapokedex.domain.usecase.GetPokemonDetailsUseCase
 import com.sevdotdev.seeminglyapokedex.fixtures.DomainTestFixtures
 import com.sevdotdev.seeminglyapokedex.rules.TestDispatcherRule
 import com.sevdotdev.seeminglyapokedex.ui.navigation.NavRoute
+import com.sevdotdev.seeminglyapokedex.ui.pokedetails.PokeDetailsAction.RetryFetchPokemon
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(TestDispatcherRule::class)
@@ -38,7 +41,7 @@ class PokeDetailsViewModelTest{
         )
 
         testSubject.state.test {
-            assertEquals(PokeDataResult.Loaidng, awaitItem())
+            assertEquals(PokeDataResult.Loading, awaitItem())
         }
     }
 
@@ -77,12 +80,24 @@ class PokeDetailsViewModelTest{
 
     @Test
     fun `assert illegal state thrown in name argument is missing in saved state`() = runTest {
-        try {
+        assertThrows<IllegalStateException> {
             PokeDetailsViewModel(savedStateHandle = SavedStateHandle(),
                 getPokemonDetailsUseCase = useCase
             )
-        } catch (e: Exception) {
-            assert(e is IllegalStateException)
         }
+    }
+
+    @Test
+    fun `retry action invokes usecase to fire again`() = runTest {
+        every { useCase(any()) } returns flowOf(PokeDataResult.Failure(InvalidData))
+        val testSubject = PokeDetailsViewModel(
+            savedStateHandle = SavedStateHandle().also {
+                it[NavRoute.PokemonDetails.ARG_NAME] = DomainTestFixtures.Defaults.DEFAULT_NAME
+            },
+            getPokemonDetailsUseCase = useCase
+        )
+
+        testSubject.submitAction(RetryFetchPokemon)
+        verify(exactly = 2) { useCase(any()) }
     }
 }

@@ -1,6 +1,5 @@
 package com.sevdotdev.seeminglyapokedex.rules
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -17,7 +16,7 @@ import org.junit.jupiter.api.extension.ExtensionContext
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class TestDispatcherRule(
-    val dispatcher: TestDispatcher = StandardTestDispatcher(scheduler = TestCoroutineScheduler()),
+    private val dispatcher: TestDispatcher = StandardTestDispatcher(scheduler = TestCoroutineScheduler()),
 ) : BeforeEachCallback, AfterEachCallback {
 
     override fun beforeEach(context: ExtensionContext?) {

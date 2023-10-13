@@ -11,6 +11,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -40,4 +43,11 @@ object AppModule {
     fun providesPokemonRepository(
         defaultPokemonRepository: DefaultPokemonRepository
     ): PokemonRepository = defaultPokemonRepository
+
+    /**
+     * Provide a worker coroutine scope for data layer IO which can be injected to allow for
+     * ease of testing.
+     */
+    @Provides
+    fun providesIOWorkScope(): CoroutineScope = CoroutineScope(Job() + Dispatchers.IO)
 }

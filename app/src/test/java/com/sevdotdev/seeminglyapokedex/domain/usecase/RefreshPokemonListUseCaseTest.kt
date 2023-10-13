@@ -25,7 +25,7 @@ class RefreshPokemonListUseCaseTest {
 
     @Test
     fun `verify repository is called when invoked`() = runTest {
-        coEvery { pokemonRepository.refreshPokemonData() } just runs
+        coEvery { pokemonRepository.refreshPokemonData() } returns Result.success(Unit)
         testSubject()
         coVerify { pokemonRepository.refreshPokemonData() }
     }

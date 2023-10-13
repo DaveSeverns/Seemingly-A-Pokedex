@@ -5,7 +5,6 @@ import com.sevdotdev.seeminglyapokedex.domain.model.PokemonListItem
 import com.sevdotdev.seeminglyapokedex.domain.model.PokemonType
 import com.sevdotdev.seeminglyapokedex.domain.model.SinglePokemon
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -28,33 +27,35 @@ class InMemoryPokemonLocalDataSource @Inject constructor() : PokemonLocalDataSou
      * Using a SharedFlow here as we want to avoid emiting an intialized value when subscribed to
      * as well as allow repeat values to be emitted as source of this flow can be refreshed.
      */
-    private val pokemonListItemFlow: MutableSharedFlow<List<PokemonListItem>> =
-        MutableSharedFlow(replay = 0)
-    private val singlePokemonCache: MutableStateFlow<List<SinglePokemon>> = MutableStateFlow(
-        emptyList()
-    )
+    private val pokemonListItemFlow: MutableStateFlow<List<PokemonListItem>> =
+        MutableStateFlow(emptyList())
+    private val singlePokemonCache: MutableStateFlow<Map<String, SinglePokemon>> =
+        MutableStateFlow(emptyMap())
 
-    override fun getPokemonListFlow(): Flow<List<PokemonListItem>> = pokemonListItemFlow.combine(singlePokemonCache){ pokeList: List<PokemonListItem>, listOfSingleMons: List<SinglePokemon> ->
-        pokeList.map { item ->
-            val cachedPokemon: SinglePokemon? = listOfSingleMons.find { singlePokemon -> singlePokemon.name == item.name }
-            /**
-             * The API does not provide this value initially but it is a pretty crucial piece of information when
-             * viewing pokemon at a glance, taking advantage of the combine operator to observe any updates
-             * to the [SinglePokemon] details flow if the type becomes avaiable.øø
-             */
-            if (item.type == PokemonType.UNKNOWN && cachedPokemon != null){
-                item.copy(type = cachedPokemon.types[0])
-            } else{
-                item
+    override fun getPokemonListFlow(): Flow<List<PokemonListItem>> =
+        pokemonListItemFlow.combine(
+            singlePokemonCache,
+        ) { pokeList: List<PokemonListItem>, mapOfSignalMons: Map<String, SinglePokemon> ->
+            pokeList.map { item ->
+                val cachedPokemon: SinglePokemon? = mapOfSignalMons[item.name]
+                /**
+                 * The API does not provide this value initially but it is a pretty crucial piece
+                 * of information when viewing pokemon at a glance,
+                 * taking advantage of the combine operator to
+                 * observe any updatesto the [SinglePokemon] details flow if the type becomes
+                 * avaiable.
+                 */
+                if (item.type == PokemonType.UNKNOWN && cachedPokemon != null) {
+                    item.copy(type = cachedPokemon.types[0])
+                } else {
+                    item
+                }
             }
         }
-    }
 
     override fun getSinglePokemonByNameFlow(name: String): Flow<SinglePokemon?> =
         singlePokemonCache.map { current ->
-            current.firstOrNull { singlePokemon ->
-                singlePokemon.name == name
-            }
+            current[name]
         }
 
 
@@ -63,8 +64,8 @@ class InMemoryPokemonLocalDataSource @Inject constructor() : PokemonLocalDataSou
     }
 
     override suspend fun saveSinglePokemon(pokemon: SinglePokemon) {
-        val current = singlePokemonCache.value.toMutableList()
-        current.add(pokemon)
+        val current = singlePokemonCache.value.toMutableMap()
+        current[pokemon.name] = pokemon
         singlePokemonCache.emit(current)
     }
 }

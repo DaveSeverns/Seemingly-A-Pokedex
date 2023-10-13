@@ -47,7 +47,7 @@ class PokeListViewModelTest {
             getListOfPokemonUseCase = getListOfPokemonUseCase,
         )
         testSubject.state.test {
-            assertEquals(PokeDataResult.Loaidng, awaitItem())
+            assertEquals(PokeDataResult.Loading, awaitItem())
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -94,9 +94,9 @@ class PokeListViewModelTest {
             awaitItem() // from use case
             testSubject.submitAction(PokeListAction.RefreshClicked)
 
-            assertEquals(PokeDataResult.Loaidng, awaitItem())
+            assertEquals(PokeDataResult.Loading, awaitItem())
         }
         advanceUntilIdle()
-        coVerify(exactly = 2) { refreshPokemonListUseCase() }
+        coVerify(exactly = 1) { refreshPokemonListUseCase() }
     }
 }
